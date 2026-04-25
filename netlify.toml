@@ -7,22 +7,37 @@
   to     = "/index.html"
   status = 200
 
+# Service worker — never cache
 [[headers]]
   for = "/sw.js"
   [headers.values]
     Cache-Control = "no-cache"
 
+# JS assets have content hashes in their filenames — safe to cache forever
 [[headers]]
-  for = "/*.js"
+  for = "/assets/*.js"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
+# PNG assets with content hashes (in /assets/) — safe to cache forever
 [[headers]]
-  for = "/*.png"
+  for = "/assets/*.png"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
+# Icons and favicon — static filenames, must allow revalidation
 [[headers]]
-  for = "/*.mp3"
+  for = "/icons/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400, must-revalidate"
+
+[[headers]]
+  for = "/favicon.png"
+  [headers.values]
+    Cache-Control = "public, max-age=86400, must-revalidate"
+
+# MP3 assets with content hashes — safe to cache forever
+[[headers]]
+  for = "/assets/*.mp3"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
