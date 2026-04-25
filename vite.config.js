@@ -28,6 +28,8 @@ export default defineConfig({
       workbox: {
         // Cache all assets for offline use
         globPatterns: ['**/*.{js,css,html,png,jpg,svg,mp3}'],
+        // Exclude the 1024px icon — only needed for the App Store, not the PWA
+        globIgnores: ['**/icons/icon-1024.png'],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
