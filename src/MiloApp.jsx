@@ -487,10 +487,14 @@ function generatePNG(container, onReady) {
 
   const img = new Image();
   img.onload = () => {
-    const scale  = 3;
+    // iOS Safari (older iPads) caps canvas size around 4096×4096.
+    // Compute scale dynamically so the largest dimension stays under the cap.
+    const MAX_CANVAS_DIM = 4000;
+    const maxScale = Math.min(MAX_CANVAS_DIM / svgW, MAX_CANVAS_DIM / svgH);
+    const scale  = Math.min(3, maxScale);
     const canvas = document.createElement('canvas');
-    canvas.width  = svgW * scale;
-    canvas.height = svgH * scale;
+    canvas.width  = Math.floor(svgW * scale);
+    canvas.height = Math.floor(svgH * scale);
     const ctx = canvas.getContext('2d');
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
