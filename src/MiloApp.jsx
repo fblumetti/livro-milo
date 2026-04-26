@@ -303,6 +303,18 @@ const TRANSLATIONS = {
     tapToClose: 'Toque fora para fechar',
     imageReady: '🎨 Sua imagem está pronta!',
     downloadBtn: '⬇ Baixar PNG',
+    tutorialTitle: 'Como brincar',
+    tutorialSkip: 'Pular',
+    tutorialNext: 'Próximo',
+    tutorialDone: 'Vamos colorir!',
+    tutorialSteps: [
+      { title: 'Escolha uma cor', text: 'Toque numa cor da paleta para selecioná-la.' },
+      { title: 'Pinte ou Mova', text: 'Use o lápis para pintar tocando na imagem, ou a mãozinha para mover e dar zoom.' },
+      { title: 'Leia a história', text: 'Toque neste botão no canto superior direito para ler a história desta cena.' },
+      { title: 'Salve sua arte', text: 'Quando terminar, toque em salvar para guardar a imagem nas suas fotos.' },
+      { title: 'Próxima cena', text: 'Toque em "Próxima" para avançar e descobrir a próxima parte da história do Milo.' },
+    ],
+    helpBtn: 'Ajuda',
     pages: [
       { label: 'A Marquinha Especial', text: 'Quando ele nasceu, o papai e a mamãe urso notaram que ele tinha uma marquinha diferente em suas costas, algo que precisava de uma atenção especial.' },
       { label: 'O Grande Mágico da Floresta', text: 'Mas o grande mágico da floresta cuidou disso rapidamente, para que o pequeno urso pudesse seguir a sua jornada.' },
@@ -345,6 +357,18 @@ const TRANSLATIONS = {
     tapToClose: 'Tap outside to close',
     imageReady: '🎨 Your image is ready!',
     downloadBtn: '⬇ Download PNG',
+    tutorialTitle: 'How to play',
+    tutorialSkip: 'Skip',
+    tutorialNext: 'Next',
+    tutorialDone: "Let's color!",
+    tutorialSteps: [
+      { title: 'Pick a color', text: 'Tap a color from the palette to select it.' },
+      { title: 'Paint or Move', text: 'Use the pencil to paint by tapping the image, or the hand to move and zoom.' },
+      { title: 'Read the story', text: 'Tap this button in the top-right corner to read the story for this scene.' },
+      { title: 'Save your art', text: "When you're done, tap save to keep the image in your photos." },
+      { title: 'Next scene', text: "Tap \"Next\" to continue and discover the next part of Milo's story." },
+    ],
+    helpBtn: 'Help',
     pages: [
       { label: 'The Special Mark', text: 'When he was born, mama and papa bear noticed he had a different mark on his back — something that needed special attention.' },
       { label: "The Forest's Great Wizard", text: "But the forest's great wizard took care of it quickly, so the little bear could continue on his journey." },
@@ -387,6 +411,18 @@ const TRANSLATIONS = {
     tapToClose: 'Toca fuera para cerrar',
     imageReady: '🎨 ¡Tu imagen está lista!',
     downloadBtn: '⬇ Descargar PNG',
+    tutorialTitle: 'Cómo jugar',
+    tutorialSkip: 'Saltar',
+    tutorialNext: 'Siguiente',
+    tutorialDone: '¡A colorear!',
+    tutorialSteps: [
+      { title: 'Elige un color', text: 'Toca un color de la paleta para seleccionarlo.' },
+      { title: 'Pinta o Mueve', text: 'Usa el lápiz para pintar tocando la imagen, o la manita para mover y hacer zoom.' },
+      { title: 'Lee la historia', text: 'Toca este botón en la esquina superior derecha para leer la historia de esta escena.' },
+      { title: 'Guarda tu arte', text: 'Cuando termines, toca guardar para guardar la imagen en tus fotos.' },
+      { title: 'Próxima escena', text: 'Toca "Siguiente" para avanzar y descubrir la siguiente parte de la historia de Milo.' },
+    ],
+    helpBtn: 'Ayuda',
     pages: [
       { label: 'La Marca Especial', text: 'Cuando nació, mamá y papá oso notaron que tenía una marca diferente en su espalda, algo que necesitaba atención especial.' },
       { label: 'El Gran Mago del Bosque', text: 'Pero el gran mago del bosque se encargó de eso rápidamente, para que el osito pudiera seguir su camino.' },
@@ -543,6 +579,8 @@ export default function MiloApp() {
   const [toastMsg, setToastMsg]         = useState(null);
   const [exportImg, setExportImg]       = useState(null);
   const [musicOn, setMusicOn]           = useState(true);
+  const [showTutorial, setShowTutorial] = useState(false);
+  const [tutorialStep, setTutorialStep] = useState(0);
   const [lang, setLang]                 = useState(() => {
     const nav = (navigator.language || 'en').toLowerCase();
     if (nav.startsWith('pt')) return 'pt';
@@ -563,6 +601,28 @@ export default function MiloApp() {
   // Keep ref in sync so SVG event listeners always see latest color
   useEffect(() => { selectedColorRef.current = selectedColor; }, [selectedColor]);
   useEffect(() => { moveModeRef.current = moveMode; }, [moveMode]);
+
+  // Show tutorial on first entry to coloring screen (persisted in localStorage)
+  useEffect(() => {
+    if (screen === "coloring") {
+      try {
+        const seen = localStorage.getItem('milo_tutorial_seen_v1');
+        if (!seen) {
+          setTutorialStep(0);
+          setShowTutorial(true);
+        }
+      } catch { /* localStorage unavailable */ }
+    }
+  }, [screen]);
+
+  const dismissTutorial = () => {
+    setShowTutorial(false);
+    try { localStorage.setItem('milo_tutorial_seen_v1', '1'); } catch {}
+  };
+  const showTutorialAgain = () => {
+    setTutorialStep(0);
+    setShowTutorial(true);
+  };
 
 
   // ── Background music ──
@@ -1340,6 +1400,10 @@ export default function MiloApp() {
               {iconBtn(handleSave, t.saveBtn, false, false,
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
               )}
+              {/* Help / re-show tutorial */}
+              {iconBtn(showTutorialAgain, t.helpBtn, false, false,
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              )}
             </div>
 
             {/* Linha 2 (landscape) ou à direita (portrait): zoom pill */}
@@ -1531,6 +1595,157 @@ export default function MiloApp() {
           <Sidebar/>
         </div>
       )}
+
+      {/* Tutorial overlay (first-run + on-demand) */}
+      {showTutorial && screen === 'coloring' && (() => {
+        const totalSteps = t.tutorialSteps.length;
+        const step = t.tutorialSteps[tutorialStep];
+        const isLast = tutorialStep === totalSteps - 1;
+        const next = () => isLast ? dismissTutorial() : setTutorialStep(s => s + 1);
+
+        // Pill-styled icon matching the actual app buttons
+        const IconPill = ({ children, active=false }) => (
+          <div style={{
+            width:54, height:54, borderRadius:16,
+            background: active ? '#E6EFE0' : '#FDFBF5',
+            border: `1px solid ${active ? M.greenDk : '#ECE4D3'}`,
+            color: M.greenDk,
+            display:'inline-flex', alignItems:'center', justifyContent:'center',
+            boxShadow:'0 2px 0 rgba(45,80,53,.08)',
+          }}>{children}</div>
+        );
+
+        // Icons matching the real buttons (1-to-1 SVG copies)
+        const stepIcons = [
+          // 1. Color palette — show 5 sample swatches
+          <div style={{ display:'flex', gap:8, alignItems:'center' }}>
+            {COLORS.slice(0, 6).map((c, i) => (
+              <div key={i} style={{
+                width:30, height:30, borderRadius:'50%', background:c,
+                border: i === 0 ? `3px solid ${M.greenDk}` : '2px solid rgba(0,0,0,.08)',
+                boxShadow:'0 2px 4px rgba(0,0,0,.08)',
+              }}/>
+            ))}
+          </div>,
+          // 2. Pencil + Hand
+          <div style={{ display:'flex', gap:10 }}>
+            <IconPill active>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
+            </IconPill>
+            <IconPill>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12V7a2 2 0 0 1 4 0v4"/><path d="M9 11V5a2 2 0 0 1 4 0v6"/><path d="M13 11V6a2 2 0 0 1 4 0v7"/><path d="M17 13v-2a2 2 0 0 1 4 0v5a6 6 0 0 1-6 6H11a6 6 0 0 1-6-6v-2"/></svg>
+            </IconPill>
+          </div>,
+          // 3. Story (hamburger) — same icon as in header
+          <IconPill>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+          </IconPill>,
+          // 4. Save (download arrow)
+          <IconPill>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </IconPill>,
+          // 5. Next button — actual pill style
+          <div style={{
+            display:'inline-flex', alignItems:'center', gap:8,
+            padding:'10px 18px', borderRadius:9999,
+            background:M.greenDk, color:'#fff',
+            fontFamily:"'Baloo 2',cursive", fontWeight:700, fontSize:'0.95rem',
+          }}>
+            {t.nextBtn}
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </div>,
+        ];
+
+        return (
+          <div
+            onClick={dismissTutorial}
+            style={{
+              position:'fixed', inset:0, zIndex:9998,
+              background:'rgba(20,25,21,0.78)',
+              backdropFilter:'blur(4px)', WebkitBackdropFilter:'blur(4px)',
+              display:'flex', alignItems:'center', justifyContent:'center',
+              padding:20,
+              animation:'mFadeIn 0.25s ease-out',
+            }}
+          >
+            <div
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                background:'#FFF8E7',
+                borderRadius:24,
+                padding:'28px 26px 22px',
+                maxWidth:380, width:'100%',
+                boxShadow:'0 24px 60px -10px rgba(0,0,0,0.4)',
+                fontFamily:"'Quicksand','Baloo 2',sans-serif",
+                textAlign:'center',
+                position:'relative',
+              }}
+            >
+              {/* Header */}
+              <div style={{ fontSize:'0.78rem', fontWeight:700, color:M.brown, letterSpacing:'.08em',
+                textTransform:'uppercase', marginBottom:14, opacity:.6 }}>
+                {t.tutorialTitle} · {tutorialStep + 1}/{totalSteps}
+              </div>
+
+              {/* Icon — matches real app buttons */}
+              <div style={{ display:'flex', justifyContent:'center', marginBottom:16, minHeight:54 }}>
+                {stepIcons[tutorialStep]}
+              </div>
+
+              {/* Title */}
+              <div style={{ fontFamily:"'Baloo 2',cursive", fontWeight:800, fontSize:'1.5rem',
+                color:M.greenDk, marginBottom:10, lineHeight:1.2 }}>
+                {step.title}
+              </div>
+
+              {/* Body */}
+              <div style={{ color:M.brown, fontSize:'1rem', lineHeight:1.5, marginBottom:22 }}>
+                {step.text}
+              </div>
+
+              {/* Progress dots */}
+              <div style={{ display:'flex', gap:6, justifyContent:'center', marginBottom:22 }}>
+                {t.tutorialSteps.map((_, i) => (
+                  <div key={i} style={{
+                    width: i === tutorialStep ? 22 : 8, height:8, borderRadius:9999,
+                    background: i === tutorialStep ? M.greenDk : 'rgba(45,80,53,.22)',
+                    transition:'all 0.25s',
+                  }}/>
+                ))}
+              </div>
+
+              {/* Buttons */}
+              <div style={{ display:'flex', gap:10, justifyContent:'center' }}>
+                {!isLast && (
+                  <button
+                    onClick={dismissTutorial}
+                    style={{
+                      padding:'12px 22px', borderRadius:9999, border:'2px solid rgba(45,80,53,.2)',
+                      background:'transparent', color:M.greenDk, fontFamily:"'Quicksand',sans-serif",
+                      fontWeight:700, fontSize:'0.95rem', cursor:'pointer',
+                    }}
+                  >
+                    {t.tutorialSkip}
+                  </button>
+                )}
+                <button
+                  onClick={next}
+                  style={{
+                    padding:'12px 28px', borderRadius:9999, border:0,
+                    background:M.greenDk, color:'#fff',
+                    fontFamily:"'Baloo 2',cursive", fontWeight:700, fontSize:'1rem',
+                    cursor:'pointer', boxShadow:'0 4px 0 rgba(31,42,36,.3)',
+                    display:'inline-flex', alignItems:'center', gap:8,
+                  }}
+                >
+                  {isLast ? t.tutorialDone : t.tutorialNext}
+                  {!isLast && <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>}
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Export modal */}
       {exportImg && (
