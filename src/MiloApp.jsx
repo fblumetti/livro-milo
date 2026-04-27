@@ -1518,7 +1518,7 @@ export default function MiloApp() {
           display:'inline-flex', alignItems:'center', justifyContent:'center',
           cursor:'pointer', flexShrink:0,
         }}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 11 L12 4 L21 11"/><path d="M5 10 L5 20 L19 20 L19 10"/><path d="M10 20 L10 14 L14 14 L14 20"/></svg>
         </button>
         {/* Center: title only */}
         <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:2, flex:1, overflow:'hidden' }}>
@@ -1535,7 +1535,7 @@ export default function MiloApp() {
           display:'inline-flex', alignItems:'center', justifyContent:'center',
           cursor:'pointer', flexShrink:0, transition:'all 0.18s',
         }}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M2 5 C2 4.4, 2.4 4, 3 4 L10 4 C11 4, 12 4.6, 12 5.5 L12 20 C12 19.2, 11.4 18.5, 10.5 18.5 L3 18.5 C2.4 18.5, 2 18.1, 2 17.5 Z"/><path d="M22 5 C22 4.4, 21.6 4, 21 4 L14 4 C13 4, 12 4.6, 12 5.5 L12 20 C12 19.2, 12.6 18.5, 13.5 18.5 L21 18.5 C21.6 18.5, 22 18.1, 22 17.5 Z"/><path d="M5 8 L8.5 8 M5 11 L8.5 11 M15.5 8 L19 8 M15.5 11 L19 11"/></svg>
         </button>
       </div>
 
@@ -1638,7 +1638,7 @@ export default function MiloApp() {
           </div>,
           // 3. Story (hamburger) — same icon as in header
           <IconPill>
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M2 5 C2 4.4, 2.4 4, 3 4 L10 4 C11 4, 12 4.6, 12 5.5 L12 20 C12 19.2, 11.4 18.5, 10.5 18.5 L3 18.5 C2.4 18.5, 2 18.1, 2 17.5 Z"/><path d="M22 5 C22 4.4, 21.6 4, 21 4 L14 4 C13 4, 12 4.6, 12 5.5 L12 20 C12 19.2, 12.6 18.5, 13.5 18.5 L21 18.5 C21.6 18.5, 22 18.1, 22 17.5 Z"/><path d="M5 8 L8.5 8 M5 11 L8.5 11 M15.5 8 L19 8 M15.5 11 L19 11"/></svg>
           </IconPill>,
           // 4. Save (download arrow)
           <IconPill>

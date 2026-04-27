@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teste de Ícones — Livro do Milo</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #FFF4DE;
+      min-height: 100vh;
+      padding: 32px 20px;
+      color: #2D5035;
+    }
+    h1 {
+      font-size: 1.4rem;
+      margin-bottom: 6px;
+      color: #2D5035;
+    }
+    .subtitle {
+      color: #6B4226;
+      opacity: .7;
+      margin-bottom: 28px;
+      font-size: .92rem;
+    }
+    .section {
+      margin-bottom: 38px;
+    }
+    .section-title {
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: #6B4226;
+      opacity: .55;
+      margin-bottom: 14px;
+    }
+
+    /* Mock header demonstrating buttons in context */
+    .mock-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      border-radius: 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    }
+    .mock-header.light  { background: #FFF8E7; }
+    .mock-header.green  { background: #2D5035; }
+    .mock-header.brown  { background: #6B4226; }
+    .mock-header.image  { background: linear-gradient(135deg, #E8C589, #C9A063); }
+
+    .header-title {
+      font-weight: 700;
+      font-size: 1rem;
+      flex: 1;
+      text-align: center;
+      padding: 0 12px;
+    }
+    .mock-header.light  .header-title { color: #2D5035; }
+    .mock-header.green  .header-title,
+    .mock-header.brown  .header-title,
+    .mock-header.image  .header-title { color: #fff; }
+
+    /* Corner button — exact spec from handoff */
+    .corner-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.18);
+      border: 1.5px solid rgba(255, 255, 255, 0.35);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #fff;
+      padding: 0;
+      transition: all 0.15s ease;
+      outline: none;
+      flex-shrink: 0;
+    }
+    .corner-btn:hover {
+      background: rgba(255, 255, 255, 0.28);
+      transform: scale(1.05);
+    }
+    .corner-btn:active { transform: scale(0.95); }
+
+    /* Light background variant: dark icon */
+    .mock-header.light .corner-btn {
+      background: rgba(45, 80, 53, 0.10);
+      border: 1.5px solid rgba(45, 80, 53, 0.20);
+      color: #2D5035;
+    }
+    .mock-header.light .corner-btn:hover {
+      background: rgba(45, 80, 53, 0.18);
+    }
+
+    /* Side-by-side comparison */
+    .compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 10px;
+    }
+    .compare > div {
+      background: #FFF8E7;
+      border-radius: 14px;
+      padding: 18px;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,.05);
+    }
+    .compare-label {
+      font-size: .8rem;
+      font-weight: 700;
+      color: #6B4226;
+      margin-bottom: 14px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .icon-row {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .icon-row .corner-btn {
+      background: rgba(45, 80, 53, 0.10);
+      border: 1.5px solid rgba(45, 80, 53, 0.20);
+      color: #2D5035;
+    }
+    .icon-row .corner-btn:hover {
+      background: rgba(45, 80, 53, 0.18);
+    }
+
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    /* Show pressed/hover state hint on mobile */
+    .hint {
+      font-size: .78rem;
+      color: #6B4226;
+      opacity: .65;
+      text-align: center;
+      margin-top: 8px;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🐻 Teste de Ícones</h1>
+    <p class="subtitle">Comparativo dos ícones atuais vs. propostos para o header do app.</p>
+
+    <!-- Section 1: Side-by-side ANTES vs DEPOIS -->
+    <div class="section">
+      <div class="section-title">Antes vs Depois</div>
+      <div class="compare">
+        <div>
+          <div class="compare-label">Atual</div>
+          <div class="icon-row">
+            <!-- Current back arrow -->
+            <button class="corner-btn" aria-label="Voltar (atual)">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2"
+                   stroke-linecap="round" stroke-linejoin="round">
+                <path d="M15 18l-6-6 6-6"/>
+              </svg>
+            </button>
+            <!-- Current hamburger -->
+            <button class="corner-btn" aria-label="Menu (atual)">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2"
+                   stroke-linecap="round">
+                <path d="M4 7h16M4 12h16M4 17h16"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div>
+          <div class="compare-label">Proposto</div>
+          <div class="icon-row">
+            <!-- New home -->
+            <button class="corner-btn" aria-label="Voltar para o início">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="1.8"
+                   stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 11 L12 4 L21 11" />
+                <path d="M5 10 L5 20 L19 20 L19 10" />
+                <path d="M10 20 L10 14 L14 14 L14 20" />
+              </svg>
+            </button>
+            <!-- New open book -->
+            <button class="corner-btn" aria-label="Abrir menu de páginas">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="1.8"
+                   stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 5 C2 4.4, 2.4 4, 3 4 L10 4 C11 4, 12 4.6, 12 5.5 L12 20 C12 19.2, 11.4 18.5, 10.5 18.5 L3 18.5 C2.4 18.5, 2 18.1, 2 17.5 Z" />
+                <path d="M22 5 C22 4.4, 21.6 4, 21 4 L14 4 C13 4, 12 4.6, 12 5.5 L12 20 C12 19.2, 12.6 18.5, 13.5 18.5 L21 18.5 C21.6 18.5, 22 18.1, 22 17.5 Z" />
+                <path d="M5 8 L8.5 8 M5 11 L8.5 11 M15.5 8 L19 8 M15.5 11 L19 11" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      <p class="hint">Toque/passe o mouse para ver o feedback de hover/active.</p>
+    </div>
+
+    <!-- Section 2: In context, light header -->
+    <div class="section">
+      <div class="section-title">Header claro (atual no app)</div>
+      <div class="mock-header light">
+        <button class="corner-btn" aria-label="Voltar para o início">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="1.8"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 11 L12 4 L21 11" />
+            <path d="M5 10 L5 20 L19 20 L19 10" />
+            <path d="M10 20 L10 14 L14 14 L14 20" />
+          </svg>
+        </button>
+        <span class="header-title">A Marquinha Especial</span>
+        <button class="corner-btn" aria-label="Abrir menu de páginas">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="1.8"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 5 C2 4.4, 2.4 4, 3 4 L10 4 C11 4, 12 4.6, 12 5.5 L12 20 C12 19.2, 11.4 18.5, 10.5 18.5 L3 18.5 C2.4 18.5, 2 18.1, 2 17.5 Z" />
+            <path d="M22 5 C22 4.4, 21.6 4, 21 4 L14 4 C13 4, 12 4.6, 12 5.5 L12 20 C12 19.2, 12.6 18.5, 13.5 18.5 L21 18.5 C21.6 18.5, 22 18.1, 22 17.5 Z" />
+            <path d="M5 8 L8.5 8 M5 11 L8.5 11 M15.5 8 L19 8 M15.5 11 L19 11" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Section 3: In context, green header -->
+    <div class="section">
+      <div class="section-title">Header verde (story modal)</div>
+      <div class="mock-header green">
+        <button class="corner-btn" aria-label="Voltar para o início">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="1.8"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 11 L12 4 L21 11" />
+            <path d="M5 10 L5 20 L19 20 L19 10" />
+            <path d="M10 20 L10 14 L14 14 L14 20" />
+          </svg>
+        </button>
+        <span class="header-title">Capítulo 1</span>
+        <button class="corner-btn" aria-label="Abrir menu de páginas">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="1.8"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 5 C2 4.4, 2.4 4, 3 4 L10 4 C11 4, 12 4.6, 12 5.5 L12 20 C12 19.2, 11.4 18.5, 10.5 18.5 L3 18.5 C2.4 18.5, 2 18.1, 2 17.5 Z" />
+            <path d="M22 5 C22 4.4, 21.6 4, 21 4 L14 4 C13 4, 12 4.6, 12 5.5 L12 20 C12 19.2, 12.6 18.5, 13.5 18.5 L21 18.5 C21.6 18.5, 22 18.1, 22 17.5 Z" />
+            <path d="M5 8 L8.5 8 M5 11 L8.5 11 M15.5 8 L19 8 M15.5 11 L19 11" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Section 4: Brown header -->
+    <div class="section">
+      <div class="section-title">Header marrom</div>
+      <div class="mock-header brown">
+        <button class="corner-btn" aria-label="Voltar para o início">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="1.8"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 11 L12 4 L21 11" />
+            <path d="M5 10 L5 20 L19 20 L19 10" />
+            <path d="M10 20 L10 14 L14 14 L14 20" />
+          </svg>
+        </button>
+        <span class="header-title">Header Marrom</span>
+        <button class="corner-btn" aria-label="Abrir menu de páginas">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="1.8"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 5 C2 4.4, 2.4 4, 3 4 L10 4 C11 4, 12 4.6, 12 5.5 L12 20 C12 19.2, 11.4 18.5, 10.5 18.5 L3 18.5 C2.4 18.5, 2 18.1, 2 17.5 Z" />
+            <path d="M22 5 C22 4.4, 21.6 4, 21 4 L14 4 C13 4, 12 4.6, 12 5.5 L12 20 C12 19.2, 12.6 18.5, 13.5 18.5 L21 18.5 C21.6 18.5, 22 18.1, 22 17.5 Z" />
+            <path d="M5 8 L8.5 8 M5 11 L8.5 11 M15.5 8 L19 8 M15.5 11 L19 11" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Section 5: Image-style header (warm gradient) -->
+    <div class="section">
+      <div class="section-title">Header sobre cor quente</div>
+      <div class="mock-header image">
+        <button class="corner-btn" aria-label="Voltar para o início">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="1.8"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 11 L12 4 L21 11" />
+            <path d="M5 10 L5 20 L19 20 L19 10" />
+            <path d="M10 20 L10 14 L14 14 L14 20" />
+          </svg>
+        </button>
+        <span class="header-title">Sobre o Milo</span>
+        <button class="corner-btn" aria-label="Abrir menu de páginas">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="1.8"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 5 C2 4.4, 2.4 4, 3 4 L10 4 C11 4, 12 4.6, 12 5.5 L12 20 C12 19.2, 11.4 18.5, 10.5 18.5 L3 18.5 C2.4 18.5, 2 18.1, 2 17.5 Z" />
+            <path d="M22 5 C22 4.4, 21.6 4, 21 4 L14 4 C13 4, 12 4.6, 12 5.5 L12 20 C12 19.2, 12.6 18.5, 13.5 18.5 L21 18.5 C21.6 18.5, 22 18.1, 22 17.5 Z" />
+            <path d="M5 8 L8.5 8 M5 11 L8.5 11 M15.5 8 L19 8 M15.5 11 L19 11" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
