@@ -1359,55 +1359,78 @@ export default function MiloApp() {
 
           {/* Swatches — wrapper encolhível em landscape para o tool row nunca ser cortado */}
           {(() => {
-            const availW = isLandscapeMode
-              ? (sideW || 300) - 28
-              : (cw || 300) - 28;
             const isLargeTab = window.innerWidth >= 1024;
-            const isPhone = isLandscapeMode ? window.innerHeight < 500 : isMobile;
-            const SW_MAX = isPhone ? (isLandscapeMode ? 32 : 28) : (isLargeTab ? 64 : 44);
-            // Cols: portrait always 10; landscape: 5 for iPhone (4 rows, larger touch targets),
-            // 4 for large tablet (big swatches), 5 for regular tablet
-            const cols = !isLandscapeMode ? 10
-              : isPhone ? 5
-              : isLargeTab ? 4
-              : availW >= 240 ? 10
-              : availW >= 150 ? 5 : 4;
-            const gap = isLargeTab && isLandscapeMode ? 5 : 3;
-            // Cap swatch size by available height so tools are never pushed out
-            let maxSwatchPx = SW_MAX;
-            if (isLandscapeMode) {
-              const approxNavH  = 50;
-              const approxToolH = isPhone ? 76 : (isLargeTab ? 110 : 90);
-              const approxOverhead = 38; // dock padding + internal gap to tool row
-              const availForSwatches = (ch || 300) - approxNavH - GAP - approxOverhead - approxToolH;
-              if (availForSwatches > 0) {
-                const numRows = Math.ceil(COLORS.length / cols);
-                const maxByH  = Math.floor((availForSwatches - (numRows - 1) * gap) / numRows);
-                maxSwatchPx   = Math.min(maxSwatchPx, Math.max(18, maxByH));
+            const isPhone    = isLandscapeMode ? window.innerHeight < 500 : isMobile;
+
+            let cols, gap, maxSw;
+
+            if (!isLandscapeMode) {
+              // ── Portrait: layout fixo 10 colunas ──
+              cols  = 10;
+              gap   = 3;
+              maxSw = isPhone ? 28 : (isLargeTab ? 64 : 44);
+            } else {
+              // ── Landscape: escolhe o melhor entre 3 layouts fixos ──
+              // Espaço disponível em largura
+              const availW = (sideW || 300) - 28;
+
+              // Espaço disponível em altura para os swatches
+              // (ch = altura do sidebar = altura do canvas)
+              const btnH      = isPhone ? 36 : (isLargeTab ? 54 : 46);
+              const toolRowH  = btnH + 36 + 12; // botões + zoom pill + gap interno
+              const navH      = 50;              // barra Anterior / Próxima
+              const dockOver  = 26 + 12;         // padding do dock + gap até tool row
+              const availH    = Math.max(0, (ch || 300) - navH - GAP - dockOver - toolRowH);
+
+              gap = 4;
+
+              // Candidatos: [linhas × colunas] com 20 cores
+              const candidates = [
+                { rows: 2, cols: 10 },
+                { rows: 4, cols: 5  },
+                { rows: 5, cols: 4  },
+              ];
+
+              // Para cada candidato, calcula o swatch que cabe em largura E altura
+              let best = null;
+              for (const { rows, cols: c } of candidates) {
+                const swByW = Math.floor((availW - (c - 1) * gap) / c);
+                const swByH = availH > 0
+                  ? Math.floor((availH - (rows - 1) * gap) / rows)
+                  : swByW;
+                const sw = Math.min(swByW, swByH);
+                // Prefere o layout que entrega o maior swatch
+                if (!best || sw > best.sw) best = { rows, cols: c, sw };
               }
+
+              cols  = best.cols;
+              maxSw = Math.max(16, best.sw);
             }
+
+            const swatchBtn = c => (
+              <button key={c} onClick={() => setSelectedColor(c)} style={{
+                aspectRatio:'1', width:'100%', height:'auto',
+                borderRadius:9999, border:0, cursor:'pointer',
+                background:c, transition:'transform .14s',
+                transform: selectedColor === c ? 'scale(1.18)' : 'scale(1)',
+                position:'relative', zIndex: selectedColor === c ? 2 : 1,
+                boxShadow: selectedColor === c
+                  ? `0 0 0 2px #fff, 0 0 0 4px ${M.greenDk}, inset 0 0 0 1px rgba(45,80,53,.08)`
+                  : c === '#FFFFFF'
+                    ? 'inset 0 0 0 1px rgba(45,80,53,.18)'
+                    : 'inset 0 0 0 1px rgba(45,80,53,.08)',
+              }}/>
+            );
+
             return (
               <div style={isLandscapeMode ? { flex:'1 1 0', minHeight:0, overflow:'hidden' } : {}}>
                 <div style={{
                   display:'grid',
-                  gridTemplateColumns:`repeat(${cols}, minmax(0, ${maxSwatchPx}px))`,
+                  gridTemplateColumns:`repeat(${cols}, minmax(0, ${maxSw}px))`,
                   justifyContent:'center',
                   gap,
                 }}>
-                  {COLORS.map(c => (
-                    <button key={c} onClick={() => setSelectedColor(c)} style={{
-                      aspectRatio:'1', width:'100%', height:'auto',
-                      borderRadius:9999, border:0, cursor:'pointer',
-                      background:c, transition:'transform .14s',
-                      transform: selectedColor === c ? 'scale(1.18)' : 'scale(1)',
-                      position:'relative', zIndex: selectedColor === c ? 2 : 1,
-                      boxShadow: selectedColor === c
-                        ? `0 0 0 2px #fff, 0 0 0 4px ${M.greenDk}, inset 0 0 0 1px rgba(45,80,53,.08)`
-                        : c === '#FFFFFF'
-                          ? 'inset 0 0 0 1px rgba(45,80,53,.18)'
-                          : 'inset 0 0 0 1px rgba(45,80,53,.08)',
-                    }}/>
-                  ))}
+                  {COLORS.map(swatchBtn)}
                 </div>
               </div>
             );
