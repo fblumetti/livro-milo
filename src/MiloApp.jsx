@@ -681,7 +681,7 @@ export default function MiloApp() {
 
       if (landscape) {
         const DOTS_COL = 20 + GAP;
-        const availH = bodyH - PAD*2;
+        const availH = bodyH - PAD*2 - safeAreaBottom;
         let ch = availH, cw = Math.floor(ch * RATIO);
         let sideW = bodyW - cw - PAD*2 - GAP*2 - DOTS_COL;
         if (sideW < MIN_SIDE) {
