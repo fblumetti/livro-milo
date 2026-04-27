@@ -652,7 +652,7 @@ export default function MiloApp() {
   useEffect(() => {
     const compute = () => {
       const rawVw = window.innerWidth;
-      const vw  = Math.min(rawVw, 1200); // cap at 1200px so canvas doesn't explode on desktop
+      const vw  = Math.min(rawVw, 1600); // cap at 1600px so canvas doesn't explode on desktop
       // Use visualViewport when available so we get the *actually visible* height
       // on iOS (excluding Safari URL bar, notch, home indicator area).
       const vh  = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
@@ -660,12 +660,13 @@ export default function MiloApp() {
       // Landscape whenever aspect ratio is clearly wider-than-tall (works for all phone sizes)
       let landscape = ar >= 1.3;
       const mobile    = rawVw < 768;
+      const largeTab  = rawVw >= 1024;
       // Account for safe-area-inset-top (status bar / notch) and the 3px progress rail
       const safeAreaTop    = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--sat')) || 0;
       const safeAreaLeft   = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--sal')) || 0;
       const safeAreaRight  = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--sar')) || 0;
       const safeAreaBottom = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--sab')) || 0;
-      const HEADER    = (mobile ? 38 : 44) + safeAreaTop + 3;
+      const HEADER    = (mobile ? 38 : (largeTab ? 52 : 44)) + safeAreaTop + 3;
       const PAD       = 6;
       const GAP       = 6;
       const RATIO     = 4/3;
@@ -675,7 +676,7 @@ export default function MiloApp() {
 
       // Minimum sidebar width: needs to fit icon-only bottom nav (~150px)
       // and a 4-col swatch grid + zoom pill. Below this, UI breaks.
-      const MIN_SIDE = 150;
+      const MIN_SIDE = mobile ? 150 : (largeTab ? 300 : 240);
       // Minimum canvas width in landscape — below this, fall back to portrait.
       const MIN_CANVAS_W = 260;
 
@@ -704,12 +705,15 @@ export default function MiloApp() {
       setIsLandscape(false);
       {
         // Bottom mode: canvas fills full width, controls below
-        const SW_MAX = 34, SW_GAP = 4;
-        const availW = bodyW - PAD*2;            // full width, no sidebar
-        const DOTS_H = 16;                        // progress dots row
-        const BTN_H  = 34;
-        const PAL_H  = (SW_MAX + SW_GAP) * 2 + 14; // ~2 rows of swatches
-        const CTRL_EST = PAL_H + BTN_H + BTN_H + GAP*4 + 42; // palette + btns + story
+        const SW_P   = mobile ? 34 : (largeTab ? 64 : 54);
+        const SW_GAP = 4;
+        const availW = bodyW - PAD*2;
+        const ICON_H = mobile ? 36 : (largeTab ? 54 : 46);
+        const ZOOM_H = 32;
+        const NAV_BTN_H = mobile ? 40 : (largeTab ? 56 : 48);
+        const DOTS_H = 16;
+        const PAL_H  = (SW_P + SW_GAP) * 2 + 14;
+        const CTRL_EST = PAL_H + ICON_H + ZOOM_H + NAV_BTN_H + GAP*5 + 10;
         const availH = bodyH - PAD*2 - DOTS_H - GAP;
         let ch = availH - CTRL_EST;
         let cw = ch * RATIO;
@@ -903,11 +907,14 @@ export default function MiloApp() {
       </div>
     );
 
+    const largeTablet = !isMobile && window.innerWidth >= 1024;
+
     /* Card inner content — same in portrait and landscape */
     const CardContent = ({centered=true}) => (
       <>
         <span style={{display:'inline-flex', alignItems:'center', gap:6,
-          fontFamily:"'Nunito',sans-serif", fontWeight:800, fontSize:10,
+          fontFamily:"'Nunito',sans-serif", fontWeight:800,
+          fontSize: largeTablet ? 14 : 10,
           letterSpacing:'0.14em', textTransform:'uppercase', color:'#6B4226',
           background:'#FFF0D0', border:'1px solid #F3C77B',
           padding:'6px 12px', borderRadius:9999, width:'fit-content',
@@ -916,14 +923,15 @@ export default function MiloApp() {
           {t.badge}
         </span>
         <h1 style={{fontFamily:"'Baloo 2',cursive", fontWeight:800,
-          fontSize: isLandscape && isMobile ? 24 : 32, color:'#6B4226',
+          fontSize: isLandscape && isMobile ? 24 : (largeTablet ? 48 : 32), color:'#6B4226',
           margin: isLandscape && isMobile ? '4px 0 2px' : '10px 0 4px',
           lineHeight:1.03, letterSpacing:'-0.015em', textAlign:'center',
           whiteSpace:'pre-line',
           animation:'fadeUp 0.8s ease-out 0.2s both'}}>
           {t.homeTitle}
         </h1>
-        <p style={{fontFamily:"'Quicksand',sans-serif", fontWeight:500, fontSize:13, color:'#8B5A3C',
+        <p style={{fontFamily:"'Quicksand',sans-serif", fontWeight:500,
+          fontSize: largeTablet ? 18 : 13, color:'#8B5A3C',
           margin: isLandscape && isMobile ? '0 0 8px' : '0 0 14px', lineHeight:1.5, textAlign:'center',
           animation:'fadeUp 0.8s ease-out 0.3s both'}}>
           {t.homeSub}
@@ -933,8 +941,10 @@ export default function MiloApp() {
           marginBottom: isLandscape && isMobile ? 8 : 14,
           animation:'fadeUp 0.8s ease-out 0.4s both'}}>
           <button onClick={() => setScreen("coloring")} style={{
-            fontFamily:"'Baloo 2',cursive", fontWeight:700, fontSize:15,
-            padding: isLandscape && isMobile ? '9px 20px' : '12px 24px', borderRadius:9999, border:0,
+            fontFamily:"'Baloo 2',cursive", fontWeight:700,
+            fontSize: largeTablet ? 22 : 15,
+            padding: isLandscape && isMobile ? '9px 20px' : (largeTablet ? '16px 32px' : '12px 24px'),
+            borderRadius:9999, border:0,
             background:'#D97757', color:'#FFFBF2', cursor:'pointer',
             boxShadow:'0 10px 24px -8px rgba(217,119,87,.45), inset 0 -3px 0 rgba(0,0,0,.1)',
             display:'inline-flex', alignItems:'center', gap:8}}>
@@ -942,7 +952,8 @@ export default function MiloApp() {
             {t.startBtn}
           </button>
           <button onClick={() => setShowAbout(true)} style={{
-            fontFamily:"'Quicksand',sans-serif", fontWeight:600, fontSize:13,
+            fontFamily:"'Quicksand',sans-serif", fontWeight:600,
+            fontSize: largeTablet ? 17 : 13,
             color:'#8B5A3C', border:0, background:'transparent', cursor:'pointer',
             textDecoration:'underline', textUnderlineOffset:4,
             textDecorationColor:'rgba(139,90,60,.4)', padding:'4px 8px'}}>
@@ -954,14 +965,15 @@ export default function MiloApp() {
           display:'flex', flexDirection:'column', alignItems:'center',
           gap: isLandscape && isMobile ? 4 : 6,
           animation:'fadeUp 0.8s ease-out 0.5s both'}}>
-          <div style={{fontFamily:"'Nunito',sans-serif", fontWeight:700, fontSize:8,
+          <div style={{fontFamily:"'Nunito',sans-serif", fontWeight:700,
+            fontSize: largeTablet ? 12 : 8,
             letterSpacing:'0.2em', textTransform:'uppercase', color:'rgba(107,66,38,.6)'}}>
             {t.footerLabel}
           </div>
           <div style={{display:'flex', alignItems:'center', gap:16}}>
-            <img src={logoFise} alt="Instituto Fise" style={{height: isLandscape && isMobile ? 54 : 80, width:'auto', objectFit:'contain'}}/>
+            <img src={logoFise} alt="Instituto Fise" style={{height: largeTablet ? 110 : (isLandscape && isMobile ? 54 : 80), width:'auto', objectFit:'contain'}}/>
             <div style={{width:1, height:40, background:'rgba(107,66,38,.2)'}}/>
-            <img src={logoBlumetti} alt="Dr. Francesco Blumetti" style={{height: isLandscape && isMobile ? 42 : 60, width:'auto', objectFit:'contain'}}/>
+            <img src={logoBlumetti} alt="Dr. Francesco Blumetti" style={{height: largeTablet ? 84 : (isLandscape && isMobile ? 42 : 60), width:'auto', objectFit:'contain'}}/>
           </div>
           <LangSelector/>
         </div>
@@ -1031,7 +1043,7 @@ export default function MiloApp() {
               <div style={{position:'absolute', inset:0, display:'flex', alignItems:'center',
                 justifyContent:'center', zIndex:3, paddingBottom:20}}>
                 <img src={miloSprite} alt="Milo" style={{
-                  maxHeight: isMobile ? 'min(78vh, 240px)' : 'min(78vh, 420px)', width:'auto', height:'auto',
+                  maxHeight: isMobile ? 'min(78vh, 240px)' : (largeTablet ? 'min(78vh, 560px)' : 'min(78vh, 420px)'), width:'auto', height:'auto',
                   filter: miloOutlineFilter,
                   animation:'fadeUp 0.8s ease-out, float 4s ease-in-out infinite 1s'}}/>
               </div>
@@ -1040,13 +1052,13 @@ export default function MiloApp() {
             {/* RIGHT — polaroid card */}
             <div style={{flex:'1 0 0', display:'flex', flexDirection:'column', alignItems:'center',
               padding:'20px 28px 20px 10px', position:'relative', zIndex:4, overflowY:'auto'}}>
-              <div style={{background:'#FFFBF2', borderRadius:22, padding: isMobile ? '14px 18px 12px' : '22px 24px 20px',
-                border:'2px solid #6B4226', width:'100%', maxWidth: isMobile ? 420 : 540,
+              <div style={{background:'#FFFBF2', borderRadius:22, padding: isMobile ? '14px 18px 12px' : (largeTablet ? '30px 36px 26px' : '22px 24px 20px'),
+                border:'2px solid #6B4226', width:'100%', maxWidth: isMobile ? 420 : (largeTablet ? 800 : 640),
                 boxShadow:'0 8px 0 rgba(107,66,38,.15), 0 20px 40px -10px rgba(107,66,38,.25)',
                 transform:'rotate(-1.2deg)',
                 display:'flex', flexDirection:'column', alignItems:'center',
                 marginTop:'auto', marginBottom:'auto', flexShrink:0,
-                zoom: isMobile ? Math.min(1, (window.innerHeight - 44) / 342) : 1 }}>
+                zoom: (isMobile || (isLandscape && window.innerHeight < 500)) ? Math.min(1, (window.innerHeight - 44) / 420) : 1 }}>
                 <CardContent/>
               </div>
             </div>
@@ -1071,24 +1083,31 @@ export default function MiloApp() {
             ))}
 
             {/* Milo sprite — flexible centered zone above card */}
-            <div style={{position:'relative', zIndex:3, flex:1, minHeight:0,
+            <div style={{position:'relative', zIndex:3, flex: largeTablet ? '1 1 0' : 1, minHeight:0,
               display:'flex', alignItems:'flex-end', justifyContent:'center', width:'100%',
               paddingTop:24, paddingBottom:12}}>
               <img src={miloSprite} alt="Milo" style={{
-                maxHeight:'85%', maxWidth: isMobile ? 'min(210px, 55vw)' : 'min(340px, 45vw)',
+                maxHeight:'85%', maxWidth: isMobile ? 'min(210px, 55vw)' : (largeTablet ? 'min(440px, 42vw)' : 'min(340px, 45vw)'),
                 width:'auto', height:'auto',
                 filter: miloOutlineFilter,
                 animation:'fadeUp 0.8s ease-out, float 4s ease-in-out infinite 1s'}}/>
             </div>
 
             {/* Polaroid card */}
-            <div style={{position:'relative', zIndex:5, margin:`0 20px calc(env(safe-area-inset-bottom, 0px) + 20px)`,
-              background:'#FFFBF2', borderRadius:22, padding:'20px 22px 18px',
-              border:'2px solid #6B4226',
-              boxShadow:'0 8px 0 rgba(107,66,38,.15), 0 20px 40px -10px rgba(107,66,38,.25)',
-              transform:'rotate(-1.2deg)',
-              display:'flex', flexDirection:'column', alignItems:'center'}}>
-              <CardContent/>
+            <div style={{position:'relative', zIndex:5,
+              flex: largeTablet ? '1 1 0' : undefined,
+              minHeight: largeTablet ? 0 : undefined,
+              display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center',
+              margin:`0 20px calc(env(safe-area-inset-bottom, 0px) + 20px)`}}>
+              <div style={{
+                background:'#FFFBF2', borderRadius:22,
+                padding: largeTablet ? '28px 32px 24px' : '20px 22px 18px',
+                border:'2px solid #6B4226',
+                boxShadow:'0 8px 0 rgba(107,66,38,.15), 0 20px 40px -10px rgba(107,66,38,.25)',
+                transform:'rotate(-1.2deg)',
+                display:'flex', flexDirection:'column', alignItems:'center'}}>
+                <CardContent/>
+              </div>
             </div>
           </>
         )}
@@ -1308,12 +1327,17 @@ export default function MiloApp() {
   ) : null;
 
   const Sidebar = () => {
+    const isPhone = isLandscapeMode ? window.innerHeight < 500 : isMobile;
+    const icoScale = isPhone ? 1 : (window.innerWidth >= 1024 ? 1.5 : 1.25);
     const iconBtn = (onClick, label, active=false, disabled=false, children) => (
       <button onClick={disabled ? undefined : onClick} title={label} style={{
-        height:36, minWidth:36, padding:'0 10px', borderRadius:12, border:0,
+        height: isPhone ? 36 : (window.innerWidth >= 1024 ? 54 : 46),
+        minWidth: isPhone ? 36 : (window.innerWidth >= 1024 ? 54 : 46),
+        padding:'0 10px', borderRadius:12, border:0,
         background: active ? 'rgba(45,80,53,.12)' : 'transparent',
         color: disabled ? '#C8DFC8' : M.greenDk,
-        fontFamily:"'Nunito',sans-serif", fontWeight:700, fontSize:'0.8rem',
+        fontFamily:"'Nunito',sans-serif", fontWeight:700,
+        fontSize: isPhone ? '0.8rem' : (window.innerWidth >= 1024 ? '0.95rem' : '0.88rem'),
         cursor: disabled ? 'default' : 'pointer', opacity: disabled ? 0.4 : 1,
         display:'inline-flex', alignItems:'center', justifyContent:'center', gap:6,
       }}>{children}</button>
@@ -1324,7 +1348,7 @@ export default function MiloApp() {
         width: isLandscapeMode ? (sideW || 78) : (cw || '100%'),
         flexShrink: 0, display: 'flex', flexDirection: 'column',
         gap: GAP, overflow: 'hidden',
-        ...(isLandscapeMode ? { height: ch, paddingBottom: 'env(safe-area-inset-bottom, 0px)' } : {}) }}>
+        ...(isLandscapeMode ? { height: ch } : {}) }}>
 
         {/* Floating palette dock */}
         <div style={{ margin:`0`, padding:'14px 14px 12px', background:'#fff',
@@ -1338,9 +1362,18 @@ export default function MiloApp() {
             const availW = isLandscapeMode
               ? (sideW || 300) - 28
               : (cw || 300) - 28;
-            const cols = availW >= 240 ? 10 : availW >= 150 ? 5 : 4;
-            const gap = cols === 10 ? 3 : 5;
-            const maxSwatchPx = cols === 10 ? 32 : cols === 5 ? 44 : 52;
+            const isLargeTab = window.innerWidth >= 1024;
+            const isPhone = isLandscapeMode ? window.innerHeight < 500 : isMobile;
+            const SW_MAX = isPhone ? (isLandscapeMode ? 32 : 28) : (isLargeTab ? 64 : 44);
+            // Cols: portrait always 10; landscape: 5 for iPhone (4 rows, larger touch targets),
+            // 4 for large tablet (big swatches), 5 for regular tablet
+            const cols = !isLandscapeMode ? 10
+              : isPhone ? 5
+              : isLargeTab ? 4
+              : availW >= 240 ? 10
+              : availW >= 150 ? 5 : 4;
+            const gap = isLargeTab && isLandscapeMode ? 5 : 3;
+            const maxSwatchPx = SW_MAX;
             return (
               <div style={isLandscapeMode ? { flex:'1 1 0', minHeight:0, overflow:'visible' } : {}}>
                 <div style={{
@@ -1445,7 +1478,7 @@ export default function MiloApp() {
           return (
         <div style={{ background:'#FDFBF5', border:`1px solid #ECE4D3`,
           borderRadius: isLandscapeMode ? 16 : 0,
-          padding:`8px ${showNavText?16:8}px ${isLandscapeMode ? '8px' : 'calc(env(safe-area-inset-bottom,0px) + 10px)'}`,
+          padding:`8px ${showNavText?16:8}px 8px`,
           display:'flex', alignItems:'center', justifyContent:'space-between', gap: showNavText?10:4,
           flexShrink:0, overflow:'hidden', minWidth:0, boxSizing:'border-box' }}>
           <button onClick={() => { if(currentPage>0) setCurrentPage(p=>p-1); }}
@@ -1480,6 +1513,8 @@ export default function MiloApp() {
         </div>
           );
         })()}
+        {/* Safe area spacer — portrait only, keeps nav buttons vertically centered */}
+        {!isLandscapeMode && <div style={{height:'calc(env(safe-area-inset-bottom, 0px) + 4px)', flexShrink:0}}/>}
       </div>
     );
   };
@@ -1502,10 +1537,10 @@ export default function MiloApp() {
 
       {/* HEADER — paper-cream bar */}
       <div style={{
-        minHeight: `calc(${isMobile ? 38 : 44}px + env(safe-area-inset-top, 0px))`,
+        minHeight: `calc(${isMobile ? 38 : (window.innerWidth >= 1024 ? 52 : 44)}px + env(safe-area-inset-top, 0px))`,
         flexShrink: 0,
-        display:'flex', alignItems:'flex-end', justifyContent:'space-between',
-        padding:`calc(env(safe-area-inset-top,0px) + 4px) calc(14px + env(safe-area-inset-right,0px)) 8px calc(14px + env(safe-area-inset-left,0px))`,
+        display:'flex', alignItems:'center', justifyContent:'space-between',
+        padding:`calc(env(safe-area-inset-top,0px) + 6px) calc(14px + env(safe-area-inset-right,0px)) 6px calc(14px + env(safe-area-inset-left,0px))`,
         background: M.header,
         borderBottom:`1px solid ${M.border}` }}>
         {/* Back button */}
@@ -1519,7 +1554,8 @@ export default function MiloApp() {
         </button>
         {/* Center: title only */}
         <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:2, flex:1, overflow:'hidden' }}>
-          <span style={{ fontFamily:"'Baloo 2',cursive", fontWeight:700, fontSize:'1rem',
+          <span style={{ fontFamily:"'Baloo 2',cursive", fontWeight:700,
+            fontSize: window.innerWidth >= 1024 ? '1.2rem' : '1rem',
             color:M.greenDk, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', maxWidth:'100%' }}>
             {t.pages[currentPage].label}
           </span>
@@ -1561,7 +1597,7 @@ export default function MiloApp() {
         <div style={{ flex:1, minHeight:0, display:'flex',
           flexDirection: isLandscapeMode ? 'row' : 'column',
           padding: isLandscapeMode
-            ? `${PAD}px calc(env(safe-area-inset-right, 0px) + ${PAD}px) ${PAD}px calc(env(safe-area-inset-left, 0px) + ${PAD}px)`
+            ? `${PAD}px calc(env(safe-area-inset-right, 0px) + ${PAD}px) calc(env(safe-area-inset-bottom, 0px) + ${PAD}px) calc(env(safe-area-inset-left, 0px) + ${PAD}px)`
             : PAD,
           gap: GAP, overflow:'hidden',
           alignItems: isLandscapeMode ? 'flex-start' : 'center',
