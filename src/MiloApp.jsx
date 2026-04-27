@@ -1,3 +1,4 @@
+// v1.0.3 — ícones casa e livro aberto
 import { useState, useRef, useEffect } from "react";
 import posterImg from './assets/poster.jpg';
 import miloSprite from './assets/milo-sprite.png';
