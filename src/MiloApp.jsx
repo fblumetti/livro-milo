@@ -1311,7 +1311,7 @@ export default function MiloApp() {
     const iconBtn = (onClick, label, active=false, disabled=false, children) => (
       <button onClick={disabled ? undefined : onClick} title={label} style={{
         height:36, minWidth:36, padding:'0 10px', borderRadius:12, border:0,
-        background: active ? '#C8DFC8' : 'transparent',
+        background: active ? 'rgba(45,80,53,.12)' : 'transparent',
         color: disabled ? '#C8DFC8' : M.greenDk,
         fontFamily:"'Nunito',sans-serif", fontWeight:700, fontSize:'0.8rem',
         cursor: disabled ? 'default' : 'pointer', opacity: disabled ? 0.4 : 1,
@@ -1509,13 +1509,13 @@ export default function MiloApp() {
         minHeight: `calc(${isMobile ? 38 : 44}px + env(safe-area-inset-top, 0px))`,
         flexShrink: 0,
         display:'flex', alignItems:'flex-end', justifyContent:'space-between',
-        padding:`env(safe-area-inset-top,0px) calc(14px + env(safe-area-inset-right,0px)) 0 calc(14px + env(safe-area-inset-left,0px))`,
+        padding:`calc(env(safe-area-inset-top,0px) + 4px) calc(14px + env(safe-area-inset-right,0px)) 8px calc(14px + env(safe-area-inset-left,0px))`,
         background: M.header,
         borderBottom:`1px solid ${M.border}` }}>
         {/* Back button */}
         <button onClick={() => setScreen('home')} style={{
-          width:38, height:38, borderRadius:14, border:0,
-          background:'transparent', color:M.greenDk,
+          width:38, height:38, borderRadius:12, border:0,
+          background:'rgba(45,80,53,.12)', color:M.greenDk,
           display:'inline-flex', alignItems:'center', justifyContent:'center',
           cursor:'pointer', flexShrink:0,
         }}>
@@ -1530,8 +1530,8 @@ export default function MiloApp() {
         </div>
         {/* Story toggle */}
         <button onClick={() => setShowStoryMobile(s => !s)} style={{
-          width:38, height:38, borderRadius:14, border:0,
-          background: showStoryMobile ? M.greenDk : 'transparent',
+          width:38, height:38, borderRadius:12, border:0,
+          background: showStoryMobile ? M.greenDk : 'rgba(45,80,53,.12)',
           color: showStoryMobile ? '#fff' : M.greenDk,
           display:'inline-flex', alignItems:'center', justifyContent:'center',
           cursor:'pointer', flexShrink:0, transition:'all 0.18s',

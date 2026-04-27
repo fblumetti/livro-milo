@@ -151,6 +151,113 @@
       margin-top: 8px;
       font-style: italic;
     }
+
+    /* ── Container variants ── */
+
+    /* A: Rounded rect individual */
+    .btn-rect {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      background: #fff;
+      border: 1.5px solid rgba(45,80,53,0.22);
+      box-shadow: 0 1px 4px rgba(0,0,0,.07);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: #2D5035; flex-shrink: 0;
+      transition: all 0.15s;
+    }
+    .btn-rect:hover { background: #F0F7F2; border-color: rgba(45,80,53,.4); transform: scale(1.05); }
+    .btn-rect:active { transform: scale(0.95); }
+
+    /* B: Pill group — both buttons share one pill */
+    .btn-pill-group {
+      display: flex; align-items: center; gap: 2px;
+      background: #fff;
+      border: 1.5px solid rgba(45,80,53,0.22);
+      border-radius: 22px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.07);
+      padding: 4px 6px;
+      overflow: hidden;
+    }
+    .btn-pill-group button {
+      width: 34px; height: 34px;
+      background: none; border: none;
+      border-radius: 18px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: #2D5035;
+      transition: background 0.15s;
+    }
+    .btn-pill-group button:hover { background: rgba(45,80,53,.10); }
+    .btn-pill-group .divider {
+      width: 1px; height: 22px;
+      background: rgba(45,80,53,.15);
+      margin: 0 2px; flex-shrink: 0;
+    }
+
+    /* C: Filled green individual */
+    .btn-filled {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      background: #2D5035;
+      border: none;
+      box-shadow: 0 2px 6px rgba(45,80,53,.28);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: #fff; flex-shrink: 0;
+      transition: all 0.15s;
+    }
+    .btn-filled:hover { background: #3a6645; transform: scale(1.05); }
+    .btn-filled:active { transform: scale(0.95); }
+
+    /* D: Soft green tint individual (no hard border) */
+    .btn-tint {
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      background: rgba(45,80,53,.12);
+      border: none;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: #2D5035; flex-shrink: 0;
+      transition: all 0.15s;
+    }
+    .btn-tint:hover { background: rgba(45,80,53,.20); transform: scale(1.05); }
+    .btn-tint:active { transform: scale(0.95); }
+
+    /* variant grid */
+    .variant-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .variant-card {
+      background: #FFF8E7;
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: 0 2px 6px rgba(0,0,0,.05);
+    }
+    .variant-label {
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: #6B4226;
+      opacity: .7;
+      margin-bottom: 12px;
+    }
+    .variant-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #FFF8E7;
+      border: 1.5px solid rgba(107,66,38,.12);
+      border-radius: 12px;
+      padding: 10px 12px;
+    }
+    .variant-title {
+      font-size: .85rem;
+      font-weight: 700;
+      color: #2D5035;
+      flex: 1;
+      text-align: center;
+      padding: 0 8px;
+    }
   </style>
 </head>
 <body>
@@ -314,6 +421,100 @@
           </svg>
         </button>
       </div>
+    </div>
+
+    <!-- Section 6: Container variants -->
+    <div class="section">
+      <div class="section-title">Variantes de container nos botões</div>
+      <div class="variant-grid">
+
+        <!-- A: Rounded rect with border -->
+        <div class="variant-card">
+          <div class="variant-label">A — Rect + borda</div>
+          <div class="variant-header">
+            <button class="btn-rect" aria-label="Casa">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 11 L12 4 L21 11"/><path d="M5 10 L5 20 L19 20 L19 10"/><path d="M10 20 L10 14 L14 14 L14 20"/>
+              </svg>
+            </button>
+            <span class="variant-title">A Marquinha</span>
+            <button class="btn-rect" aria-label="Livro">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 5 C2 4.4,2.4 4,3 4 L10 4 C11 4,12 4.6,12 5.5 L12 20 C12 19.2,11.4 18.5,10.5 18.5 L3 18.5 C2.4 18.5,2 18.1,2 17.5 Z"/>
+                <path d="M22 5 C22 4.4,21.6 4,21 4 L14 4 C13 4,12 4.6,12 5.5 L12 20 C12 19.2,12.6 18.5,13.5 18.5 L21 18.5 C21.6 18.5,22 18.1,22 17.5 Z"/>
+                <path d="M5 8 L8.5 8 M5 11 L8.5 11 M15.5 8 L19 8 M15.5 11 L19 11"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- B: Shared pill group -->
+        <div class="variant-card">
+          <div class="variant-label">B — Pill agrupado</div>
+          <div class="variant-header" style="justify-content:space-between;">
+            <div class="btn-pill-group">
+              <button aria-label="Casa">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 11 L12 4 L21 11"/><path d="M5 10 L5 20 L19 20 L19 10"/><path d="M10 20 L10 14 L14 14 L14 20"/>
+                </svg>
+              </button>
+              <div class="divider"></div>
+              <button aria-label="Livro">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2 5 C2 4.4,2.4 4,3 4 L10 4 C11 4,12 4.6,12 5.5 L12 20 C12 19.2,11.4 18.5,10.5 18.5 L3 18.5 C2.4 18.5,2 18.1,2 17.5 Z"/>
+                  <path d="M22 5 C22 4.4,21.6 4,21 4 L14 4 C13 4,12 4.6,12 5.5 L12 20 C12 19.2,12.6 18.5,13.5 18.5 L21 18.5 C21.6 18.5,22 18.1,22 17.5 Z"/>
+                  <path d="M5 8 L8.5 8 M5 11 L8.5 11 M15.5 8 L19 8 M15.5 11 L19 11"/>
+                </svg>
+              </button>
+            </div>
+            <span class="variant-title">A Marquinha</span>
+            <!-- empty right side to balance — pill is on left only -->
+            <div style="width:80px"></div>
+          </div>
+        </div>
+
+        <!-- C: Filled green -->
+        <div class="variant-card">
+          <div class="variant-label">C — Fundo verde</div>
+          <div class="variant-header">
+            <button class="btn-filled" aria-label="Casa">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 11 L12 4 L21 11"/><path d="M5 10 L5 20 L19 20 L19 10"/><path d="M10 20 L10 14 L14 14 L14 20"/>
+              </svg>
+            </button>
+            <span class="variant-title">A Marquinha</span>
+            <button class="btn-filled" aria-label="Livro">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 5 C2 4.4,2.4 4,3 4 L10 4 C11 4,12 4.6,12 5.5 L12 20 C12 19.2,11.4 18.5,10.5 18.5 L3 18.5 C2.4 18.5,2 18.1,2 17.5 Z"/>
+                <path d="M22 5 C22 4.4,21.6 4,21 4 L14 4 C13 4,12 4.6,12 5.5 L12 20 C12 19.2,12.6 18.5,13.5 18.5 L21 18.5 C21.6 18.5,22 18.1,22 17.5 Z"/>
+                <path d="M5 8 L8.5 8 M5 11 L8.5 11 M15.5 8 L19 8 M15.5 11 L19 11"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- D: Soft tint, no border -->
+        <div class="variant-card">
+          <div class="variant-label">D — Tint suave</div>
+          <div class="variant-header">
+            <button class="btn-tint" aria-label="Casa">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 11 L12 4 L21 11"/><path d="M5 10 L5 20 L19 20 L19 10"/><path d="M10 20 L10 14 L14 14 L14 20"/>
+              </svg>
+            </button>
+            <span class="variant-title">A Marquinha</span>
+            <button class="btn-tint" aria-label="Livro">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 5 C2 4.4,2.4 4,3 4 L10 4 C11 4,12 4.6,12 5.5 L12 20 C12 19.2,11.4 18.5,10.5 18.5 L3 18.5 C2.4 18.5,2 18.1,2 17.5 Z"/>
+                <path d="M22 5 C22 4.4,21.6 4,21 4 L14 4 C13 4,12 4.6,12 5.5 L12 20 C12 19.2,12.6 18.5,13.5 18.5 L21 18.5 C21.6 18.5,22 18.1,22 17.5 Z"/>
+                <path d="M5 8 L8.5 8 M5 11 L8.5 11 M15.5 8 L19 8 M15.5 11 L19 11"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+      </div>
+      <p class="hint">Passe o mouse para ver o hover em cada variante.</p>
     </div>
 
   </div>
