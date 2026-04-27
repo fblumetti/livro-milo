@@ -1058,7 +1058,7 @@ export default function MiloApp() {
                 transform:'rotate(-1.2deg)',
                 display:'flex', flexDirection:'column', alignItems:'center',
                 marginTop:'auto', marginBottom:'auto', flexShrink:0,
-                zoom: (isMobile || (isLandscape && window.innerHeight < 500)) ? Math.min(1, (window.innerHeight - 44) / 420) : 1 }}>
+                zoom: isLandscape ? Math.min(1, (window.innerHeight - 44) / 560) : 1 }}>
                 <CardContent/>
               </div>
             </div>
@@ -1373,7 +1373,19 @@ export default function MiloApp() {
               : availW >= 240 ? 10
               : availW >= 150 ? 5 : 4;
             const gap = isLargeTab && isLandscapeMode ? 5 : 3;
-            const maxSwatchPx = SW_MAX;
+            // Cap swatch size by available height so tools are never pushed out
+            let maxSwatchPx = SW_MAX;
+            if (isLandscapeMode) {
+              const approxNavH  = 50;
+              const approxToolH = isPhone ? 76 : (isLargeTab ? 110 : 90);
+              const approxOverhead = 38; // dock padding + internal gap to tool row
+              const availForSwatches = (ch || 300) - approxNavH - GAP - approxOverhead - approxToolH;
+              if (availForSwatches > 0) {
+                const numRows = Math.ceil(COLORS.length / cols);
+                const maxByH  = Math.floor((availForSwatches - (numRows - 1) * gap) / numRows);
+                maxSwatchPx   = Math.min(maxSwatchPx, Math.max(18, maxByH));
+              }
+            }
             return (
               <div style={isLandscapeMode ? { flex:'1 1 0', minHeight:0, overflow:'hidden' } : {}}>
                 <div style={{
