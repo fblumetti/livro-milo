@@ -1375,7 +1375,7 @@ export default function MiloApp() {
             const gap = isLargeTab && isLandscapeMode ? 5 : 3;
             const maxSwatchPx = SW_MAX;
             return (
-              <div style={isLandscapeMode ? { flex:'1 1 0', minHeight:0, overflow:'visible' } : {}}>
+              <div style={isLandscapeMode ? { flex:'1 1 0', minHeight:0, overflow:'hidden' } : {}}>
                 <div style={{
                   display:'grid',
                   gridTemplateColumns:`repeat(${cols}, minmax(0, ${maxSwatchPx}px))`,
