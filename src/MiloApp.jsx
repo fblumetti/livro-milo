@@ -1401,10 +1401,6 @@ export default function MiloApp() {
               {iconBtn(handleSave, t.saveBtn, false, false,
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
               )}
-              {/* Help / re-show tutorial */}
-              {iconBtn(showTutorialAgain, t.helpBtn, false, false,
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-              )}
             </div>
 
             {/* Linha 2 (landscape) ou à direita (portrait): zoom pill */}
@@ -1528,16 +1524,30 @@ export default function MiloApp() {
             {t.pages[currentPage].label}
           </span>
         </div>
-        {/* Story toggle */}
-        <button onClick={() => setShowStoryMobile(s => !s)} style={{
-          width:38, height:38, borderRadius:12, border:0,
-          background: showStoryMobile ? M.greenDk : 'rgba(45,80,53,.12)',
-          color: showStoryMobile ? '#fff' : M.greenDk,
-          display:'inline-flex', alignItems:'center', justifyContent:'center',
-          cursor:'pointer', flexShrink:0, transition:'all 0.18s',
+        {/* Right group: story + help pill */}
+        <div style={{
+          display:'flex', alignItems:'center', flexShrink:0,
+          background:'rgba(45,80,53,.12)', borderRadius:12, overflow:'hidden',
         }}>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M2 5 C2 4.4, 2.4 4, 3 4 L10 4 C11 4, 12 4.6, 12 5.5 L12 20 C12 19.2, 11.4 18.5, 10.5 18.5 L3 18.5 C2.4 18.5, 2 18.1, 2 17.5 Z"/><path d="M22 5 C22 4.4, 21.6 4, 21 4 L14 4 C13 4, 12 4.6, 12 5.5 L12 20 C12 19.2, 12.6 18.5, 13.5 18.5 L21 18.5 C21.6 18.5, 22 18.1, 22 17.5 Z"/><path d="M5 8 L8.5 8 M5 11 L8.5 11 M15.5 8 L19 8 M15.5 11 L19 11"/></svg>
-        </button>
+          <button onClick={() => setShowStoryMobile(s => !s)} style={{
+            width:38, height:38, border:0,
+            background: showStoryMobile ? M.greenDk : 'transparent',
+            color: showStoryMobile ? '#fff' : M.greenDk,
+            display:'inline-flex', alignItems:'center', justifyContent:'center',
+            cursor:'pointer', transition:'all 0.18s',
+          }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M2 5 C2 4.4, 2.4 4, 3 4 L10 4 C11 4, 12 4.6, 12 5.5 L12 20 C12 19.2, 11.4 18.5, 10.5 18.5 L3 18.5 C2.4 18.5, 2 18.1, 2 17.5 Z"/><path d="M22 5 C22 4.4, 21.6 4, 21 4 L14 4 C13 4, 12 4.6, 12 5.5 L12 20 C12 19.2, 12.6 18.5, 13.5 18.5 L21 18.5 C21.6 18.5, 22 18.1, 22 17.5 Z"/><path d="M5 8 L8.5 8 M5 11 L8.5 11 M15.5 8 L19 8 M15.5 11 L19 11"/></svg>
+          </button>
+          <div style={{ width:1, height:20, background:'rgba(45,80,53,.2)', flexShrink:0 }}/>
+          <button onClick={showTutorialAgain} style={{
+            width:38, height:38, border:0,
+            background:'transparent', color:M.greenDk,
+            display:'inline-flex', alignItems:'center', justifyContent:'center',
+            cursor:'pointer',
+          }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </button>
+        </div>
       </div>
 
       {/* PROGRESS RAIL */}
