@@ -295,6 +295,9 @@ const TRANSLATIONS = {
     continueBtn: 'Continuar',
     undoLabel: 'Desfazer',
     clearLabel: 'Limpar',
+    clearConfirm: 'Apagar tudo?',
+    clearConfirmBody: 'Esta ação não pode ser desfeita.',
+    cancelLabel: 'Cancelar',
     drawLabel: 'Modo Pintar',
     moveLabel: 'Modo Mover',
     prevBtn: 'Anterior',
@@ -349,6 +352,9 @@ const TRANSLATIONS = {
     continueBtn: 'Continue',
     undoLabel: 'Undo',
     clearLabel: 'Clear',
+    clearConfirm: 'Clear everything?',
+    clearConfirmBody: 'This action cannot be undone.',
+    cancelLabel: 'Cancel',
     drawLabel: 'Draw mode',
     moveLabel: 'Move mode',
     prevBtn: 'Previous',
@@ -403,6 +409,9 @@ const TRANSLATIONS = {
     continueBtn: 'Continuar',
     undoLabel: 'Deshacer',
     clearLabel: 'Limpiar',
+    clearConfirm: '¿Borrar todo?',
+    clearConfirmBody: 'Esta acción no se puede deshacer.',
+    cancelLabel: 'Cancelar',
     drawLabel: 'Modo Dibujar',
     moveLabel: 'Modo Mover',
     prevBtn: 'Anterior',
@@ -579,6 +588,7 @@ export default function MiloApp() {
   const [moveMode, setMoveMode]         = useState(false);
   const [toastMsg, setToastMsg]         = useState(null);
   const [exportImg, setExportImg]       = useState(null);
+  const [confirmClear, setConfirmClear] = useState(false);
   const [musicOn, setMusicOn]           = useState(true);
   const [showTutorial, setShowTutorial] = useState(false);
   const [tutorialStep, setTutorialStep] = useState(0);
@@ -805,7 +815,10 @@ export default function MiloApp() {
     setUndoStack(prev => prev.slice(0, -1));
   };
 
-  const handleClear = () => {
+  const handleClear = () => setConfirmClear(true);
+
+  const handleConfirmClear = () => {
+    setConfirmClear(false);
     setUndoStack([]);
     clearSVGColors(svgContainerRef.current);
   };
@@ -1329,13 +1342,13 @@ export default function MiloApp() {
   const Sidebar = () => {
     const isPhone = isLandscapeMode ? window.innerHeight < 500 : isMobile;
     const icoScale = isPhone ? 1 : (window.innerWidth >= 1024 ? 1.5 : 1.25);
-    const iconBtn = (onClick, label, active=false, disabled=false, children) => (
+    const iconBtn = (onClick, label, active=false, disabled=false, children, danger=false) => (
       <button onClick={disabled ? undefined : onClick} title={label} style={{
         height: isPhone ? 36 : (window.innerWidth >= 1024 ? 54 : 46),
         minWidth: isPhone ? 36 : (window.innerWidth >= 1024 ? 54 : 46),
         padding:'0 10px', borderRadius:12, border:0,
-        background: active ? 'rgba(45,80,53,.12)' : 'transparent',
-        color: disabled ? '#C8DFC8' : M.greenDk,
+        background: active ? 'rgba(45,80,53,.12)' : (danger ? 'rgba(190,50,40,.08)' : 'transparent'),
+        color: disabled ? '#C8DFC8' : (danger ? '#b83030' : M.greenDk),
         fontFamily:"'Nunito',sans-serif", fontWeight:700,
         fontSize: isPhone ? '0.8rem' : (window.innerWidth >= 1024 ? '0.95rem' : '0.88rem'),
         cursor: disabled ? 'default' : 'pointer', opacity: disabled ? 0.4 : 1,
@@ -1459,11 +1472,11 @@ export default function MiloApp() {
               flexWrap: 'wrap',
               justifyContent: isLandscapeMode ? 'center' : 'flex-start',
             }}>
-              {iconBtn(handleUndo, t.undoLabel, false, undoStack.length===0,
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 14l-4-4 4-4"/><path d="M5 10h9a5 5 0 0 1 0 10h-3"/></svg>
-              )}
               {iconBtn(handleClear, t.clearLabel, false, false,
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+              , true)}
+              {iconBtn(handleUndo, t.undoLabel, false, undoStack.length===0,
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 14l-4-4 4-4"/><path d="M5 10h9a5 5 0 0 1 0 10h-3"/></svg>
               )}
               {/* Draw mode */}
               {iconBtn(() => { if (moveMode) toggleMove(); }, t.drawLabel, !moveMode, false,
@@ -1836,6 +1849,43 @@ export default function MiloApp() {
           </div>
         );
       })()}
+
+      {/* Confirm clear modal */}
+      {confirmClear && (
+        <div onClick={() => setConfirmClear(false)} style={{
+          position:'fixed', inset:0, background:'rgba(0,0,0,0.45)',
+          display:'flex', alignItems:'center', justifyContent:'center', zIndex:9998,
+        }}>
+          <div onClick={e => e.stopPropagation()} style={{
+            background:'#FDFBF5', borderRadius:20, padding:'28px 28px 24px',
+            display:'flex', flexDirection:'column', alignItems:'center', gap:12,
+            boxShadow:'0 8px 32px rgba(0,0,0,0.18)',
+            maxWidth:300, width:'84vw',
+          }}>
+            <div style={{ fontSize:'2.2rem', lineHeight:1 }}>🗑️</div>
+            <p style={{ margin:0, textAlign:'center', fontFamily:"'Quicksand','Nunito',sans-serif", fontWeight:700, fontSize:'1.05rem', color:'#222' }}>
+              {t.clearConfirm}
+            </p>
+            <p style={{ margin:0, textAlign:'center', fontFamily:"'Quicksand','Nunito',sans-serif", fontSize:'0.88rem', color:'#777' }}>
+              {t.clearConfirmBody}
+            </p>
+            <div style={{ display:'flex', gap:10, marginTop:4, width:'100%' }}>
+              <button onClick={() => setConfirmClear(false)} style={{
+                flex:1, height:44, borderRadius:12, border:'1.5px solid rgba(45,80,53,.25)',
+                background:'transparent', color:'#555',
+                fontFamily:"'Nunito',sans-serif", fontWeight:700, fontSize:'0.95rem',
+                cursor:'pointer',
+              }}>{t.cancelLabel}</button>
+              <button onClick={handleConfirmClear} style={{
+                flex:1, height:44, borderRadius:12, border:0,
+                background:'#b83030', color:'#fff',
+                fontFamily:"'Nunito',sans-serif", fontWeight:700, fontSize:'0.95rem',
+                cursor:'pointer',
+              }}>{t.clearLabel}</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Export modal */}
       {exportImg && (
