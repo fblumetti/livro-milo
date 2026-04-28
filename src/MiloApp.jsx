@@ -1371,8 +1371,10 @@ export default function MiloApp() {
               maxSw = isPhone ? 28 : (isLargeTab ? 64 : 44);
             } else {
               // ── Landscape: escolhe o melhor entre 3 layouts fixos ──
-              // Espaço disponível em largura
-              const availW = (sideW || 300) - 28;
+              const RING = 8; // padding para o anel de seleção (scale+box-shadow)
+
+              // Espaço disponível em largura (descontando padding do anel)
+              const availW = (sideW || 300) - 28 - RING * 2;
 
               // Espaço disponível em altura para os swatches
               // (ch = altura do sidebar = altura do canvas)
@@ -1380,7 +1382,7 @@ export default function MiloApp() {
               const toolRowH  = btnH + 36 + 12; // botões + zoom pill + gap interno
               const navH      = 50;              // barra Anterior / Próxima
               const dockOver  = 26 + 12;         // padding do dock + gap até tool row
-              const availH    = Math.max(0, (ch || 300) - navH - GAP - dockOver - toolRowH);
+              const availH    = Math.max(0, (ch || 300) - navH - GAP - dockOver - toolRowH - RING * 2);
 
               gap = 4;
 
@@ -1423,7 +1425,9 @@ export default function MiloApp() {
             );
 
             return (
-              <div style={isLandscapeMode ? { flex:'1 1 0', minHeight:0, overflow:'hidden' } : {}}>
+              <div style={isLandscapeMode
+                ? { flex:'1 1 0', minHeight:0, overflow:'hidden', padding:8 }
+                : {}}>
                 <div style={{
                   display:'grid',
                   gridTemplateColumns:`repeat(${cols}, minmax(0, ${maxSw}px))`,
