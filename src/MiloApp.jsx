@@ -1371,17 +1371,21 @@ export default function MiloApp() {
               maxSw = isPhone ? 28 : (isLargeTab ? 64 : 44);
             } else {
               // ── Landscape: escolhe o melhor entre 3 layouts fixos ──
-              const RING = 8; // padding para o anel de seleção (scale+box-shadow)
+              const RING = 12; // padding para o anel de seleção (scale(1.18) + box-shadow 4px)
 
-              // Espaço disponível em largura (descontando padding do anel)
+              // Espaço disponível em largura (descontando padding do dock + anel)
               const availW = (sideW || 300) - 28 - RING * 2;
 
-              // Espaço disponível em altura para os swatches
-              // (ch = altura do sidebar = altura do canvas)
-              const btnH      = isPhone ? 36 : (isLargeTab ? 54 : 46);
-              const toolRowH  = btnH + 36 + 12; // botões + zoom pill + gap interno
-              const navH      = 50;              // barra Anterior / Próxima
-              const dockOver  = 26 + 12;         // padding do dock + gap até tool row
+              // Detecta se a toolbar vai quebrar para 2 linhas
+              // (5 botões × minWidth + 4 gaps + 20px margem de segurança)
+              const btnH        = isPhone ? 36 : (isLargeTab ? 54 : 46);
+              const dockInnerW  = (sideW || 300) - 28; // largura interna do dock
+              const btnsMinW    = 5 * btnH + 4 * 4 + 20; // 5 botões + gaps + margem
+              const toolWraps   = dockInnerW < btnsMinW;
+              const toolRowH    = (toolWraps ? btnH * 2 + 4 : btnH) + 36 + 12; // linha(s) + zoom + gaps
+
+              const navH      = 50;   // barra Anterior / Próxima
+              const dockOver  = 26 + 12; // padding do dock + gap até tool row
               const availH    = Math.max(0, (ch || 300) - navH - GAP - dockOver - toolRowH - RING * 2);
 
               gap = 4;
@@ -1426,7 +1430,7 @@ export default function MiloApp() {
 
             return (
               <div style={isLandscapeMode
-                ? { flex:'1 1 0', minHeight:0, overflow:'hidden', padding:8 }
+                ? { flex:'1 1 0', minHeight:0, overflow:'hidden', padding:12 }
                 : {}}>
                 <div style={{
                   display:'grid',
