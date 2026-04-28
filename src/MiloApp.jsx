@@ -1,4 +1,4 @@
-// v1.0.3 — ícones casa e livro aberto
+// v1.0.4 — paleta landscape: layouts fixos 2×10, 4×5, 5×4; anel de seleção; botões header
 import { useState, useRef, useEffect } from "react";
 import posterImg from './assets/poster.jpg';
 import miloSprite from './assets/milo-sprite.png';
