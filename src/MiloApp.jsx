@@ -601,6 +601,9 @@ export default function MiloApp() {
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
   const isPanning                       = useRef(false);
   const lastPan                         = useRef({ x: 0, y: 0 });
+  const pinchRef                        = useRef(null);
+  const zoomRef                         = useRef(1);
+  const panRef                          = useRef({ x: 0, y: 0 });
   const wrapperRef                      = useRef(null);
   const moveModeRef                     = useRef(false);
   const pageColors                      = useRef({});   // { pageIndex: { elIndex: fill } }
@@ -612,6 +615,8 @@ export default function MiloApp() {
   // Keep ref in sync so SVG event listeners always see latest color
   useEffect(() => { selectedColorRef.current = selectedColor; }, [selectedColor]);
   useEffect(() => { moveModeRef.current = moveMode; }, [moveMode]);
+  useEffect(() => { zoomRef.current = zoom; }, [zoom]);
+  useEffect(() => { panRef.current = pan; }, [pan]);
 
   // Show tutorial on first entry to coloring screen (persisted in localStorage)
   useEffect(() => {
@@ -1221,17 +1226,66 @@ export default function MiloApp() {
     setPan(prev => nz === 1 ? { x: 0, y: 0 } : clampPan(prev.x, prev.y, nz));
   };
 
+  // Mouse-only pointer handlers (touch é tratado abaixo)
   const onPointerDown = (e) => {
-    if (!moveModeRef.current) return;
+    if (!moveModeRef.current || e.pointerType === 'touch') return;
     isPanning.current = true;
-    lastPan.current = { x: e.clientX - pan.x, y: e.clientY - pan.y };
+    lastPan.current = { x: e.clientX - panRef.current.x, y: e.clientY - panRef.current.y };
     e.currentTarget.setPointerCapture(e.pointerId);
   };
   const onPointerMove = (e) => {
-    if (!isPanning.current) return;
-    setPan(prev => clampPan(e.clientX - lastPan.current.x, e.clientY - lastPan.current.y, zoom));
+    if (!isPanning.current || e.pointerType === 'touch') return;
+    setPan(clampPan(e.clientX - lastPan.current.x, e.clientY - lastPan.current.y, zoomRef.current));
   };
-  const onPointerUp = () => { isPanning.current = false; };
+  const onPointerUp = (e) => {
+    if (e.pointerType === 'touch') return;
+    isPanning.current = false;
+  };
+
+  // Touch: 1 dedo = pan, 2 dedos = pinch zoom (só em moveMode)
+  const onTouchStart = (e) => {
+    if (!moveModeRef.current) return;
+    if (e.touches.length === 2) {
+      const t0 = e.touches[0], t1 = e.touches[1];
+      const dist = Math.hypot(t1.clientX - t0.clientX, t1.clientY - t0.clientY);
+      const rect = e.currentTarget.getBoundingClientRect();
+      const cx = (t0.clientX + t1.clientX) / 2 - rect.left - rect.width / 2;
+      const cy = (t0.clientY + t1.clientY) / 2 - rect.top - rect.height / 2;
+      pinchRef.current = { dist, zoom: zoomRef.current, pan: { ...panRef.current }, center: { x: cx, y: cy } };
+      isPanning.current = false;
+    } else if (e.touches.length === 1 && !pinchRef.current) {
+      const t = e.touches[0];
+      lastPan.current = { x: t.clientX - panRef.current.x, y: t.clientY - panRef.current.y };
+      isPanning.current = true;
+    }
+  };
+  const onTouchMove = (e) => {
+    if (!moveModeRef.current) return;
+    if (e.touches.length === 2 && pinchRef.current) {
+      const t0 = e.touches[0], t1 = e.touches[1];
+      const dist = Math.hypot(t1.clientX - t0.clientX, t1.clientY - t0.clientY);
+      const scale = dist / pinchRef.current.dist;
+      const nz = Math.max(1, Math.min(3, pinchRef.current.zoom * scale));
+      const ratio = nz / pinchRef.current.zoom;
+      const { center: c, pan: ip } = pinchRef.current;
+      setZoom(nz);
+      setPan(clampPan(c.x * (1 - ratio) + ip.x * ratio, c.y * (1 - ratio) + ip.y * ratio, nz));
+    } else if (e.touches.length === 1 && isPanning.current) {
+      const t = e.touches[0];
+      setPan(clampPan(t.clientX - lastPan.current.x, t.clientY - lastPan.current.y, zoomRef.current));
+    }
+  };
+  const onTouchEnd = (e) => {
+    if (e.touches.length < 2) pinchRef.current = null;
+    if (e.touches.length === 0) {
+      isPanning.current = false;
+    } else if (e.touches.length === 1 && moveModeRef.current) {
+      // Dedo levantado durante pinch — retoma pan com o dedo restante
+      const t = e.touches[0];
+      lastPan.current = { x: t.clientX - panRef.current.x, y: t.clientY - panRef.current.y };
+      isPanning.current = true;
+    }
+  };
 
   // ── Toggle move mode ──
   const toggleMove = () => {
@@ -1677,6 +1731,9 @@ export default function MiloApp() {
             onPointerMove={onPointerMove}
             onPointerUp={onPointerUp}
             onPointerCancel={onPointerUp}
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
           >
             <style>{`.milo-svg-container svg { width: 100% !important; height: 100% !important; display: block !important; }`}</style>
             <div
